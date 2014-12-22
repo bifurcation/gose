@@ -363,3 +363,34 @@ func TestJwsCompact(t *testing.T) {
 	}
 
 }
+
+// Testing node.js generated JWS
+func TestRsaNodeJwsVerify(t *testing.T) {
+	fmt.Println("--> TestRsaNodeJwsVerify")
+	in := `{
+    "header": {
+        "alg": "RS256",
+        "jwk": {
+            "kty": "RSA",
+            "n": "q_X8f1LAnSxsB-_MQ64XaigtXEljPAZZlJlep5NJrOzSH4m55GEXMbzmATzi-_WFulAqajfK_LY33hByxoXdrQ",
+            "e": "AQAB"
+        }
+    },
+    "protected": "eyJub25jZSI6IlJVUEZVVVZWX1d0bW8ycTVrcXgwUlEifQ",
+    "payload": "aGVsbG8sIHdvcmxkIQ",
+    "signature": "aGK0GWcCgvXzOZKR0Wn4YiKYUgtFKWFlDHcXL5T5CA5x5oyZrPovnJEyfU1IDHtQp0ZD-EbT05tSVMoeY48qHQ"
+  }`
+
+	var out JsonWebSignature
+	err := json.Unmarshal([]byte(in), &out)
+	if err != nil {
+		t.Errorf("JSON unmarshal error: %+v", err)
+		return
+	}
+
+	err = out.Verify()
+	if err != nil {
+		t.Errorf("Signature failed verification: %+v", err)
+		return
+	}
+}

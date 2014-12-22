@@ -26,6 +26,13 @@ type JsonWebKey struct {
 	Thumbprint string
 }
 
+// Normal Go == operator compares pointers directly, so it doesn't
+// match the semantic of two keys being equivalent
+func (jwk1 JsonWebKey) Equals(jwk2 JsonWebKey) bool {
+	// XXX: This only works for unmarshaled keys, not constructed keys
+	return (jwk1.Thumbprint == jwk2.Thumbprint)
+}
+
 func (jwk JsonWebKey) MarshalJSON() ([]byte, error) {
 	raw := rawJsonWebKey{Kty: string(jwk.KeyType)}
 	if jwk.Rsa != nil {

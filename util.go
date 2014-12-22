@@ -5,18 +5,9 @@ import (
 	"encoding/base64"
 	"encoding/json"
 	"errors"
-	"log"
 	"math/big"
 	"strings"
 )
-
-const ENABLE_DEBUG = true
-
-func DEBUG(message interface{}) {
-	if ENABLE_DEBUG {
-		log.Println(message)
-	}
-}
 
 // Base64 functions
 
@@ -43,7 +34,6 @@ func b64dec(x string) ([]byte, error) {
 }
 
 // Buffers that know how to do b64 and bigint
-
 type JsonBuffer json.RawMessage
 
 func (jb JsonBuffer) MarshalJSON() ([]byte, error) {

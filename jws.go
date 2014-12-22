@@ -63,6 +63,11 @@ func (jws *JsonWebSignature) UnmarshalJSON(data []byte) error {
 		}
 	}
 
+	// Check that required fields are present
+	if len(jws.Signature) == 0 || len(jws.Payload) == 0 {
+		return errors.New("JWS missing required fields")
+	}
+
 	return nil
 }
 
