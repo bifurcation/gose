@@ -67,7 +67,7 @@ func (jwk *JsonWebKey) UnmarshalJSON(data []byte) error {
 			N: raw.N.ToBigInt(),
 			E: raw.E.ToInt(),
 		}
-		jwk.Thumbprint = b64enc(raw.N)
+		jwk.Thumbprint = B64enc(raw.N)
 	case "EC":
 		curve, err := name2curve(raw.Crv)
 		if err != nil {
@@ -79,7 +79,7 @@ func (jwk *JsonWebKey) UnmarshalJSON(data []byte) error {
 			X:     raw.X.ToBigInt(),
 			Y:     raw.Y.ToBigInt(),
 		}
-		jwk.Thumbprint = b64enc(raw.X) + b64enc(raw.Y)
+		jwk.Thumbprint = B64enc(raw.X) + B64enc(raw.Y)
 	}
 
 	return nil

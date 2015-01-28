@@ -18,8 +18,8 @@ func TestB64Enc(t *testing.T) {
 	fmt.Println("--> TestB64Enc")
 	in := []byte{0x00, 0xff}
 	out := "AP8"
-	if x := b64enc(in); x != out {
-		t.Errorf("b64enc(%v) = %v, want %v", in, x, out)
+	if x := B64enc(in); x != out {
+		t.Errorf("B64enc(%v) = %v, want %v", in, x, out)
 	}
 }
 
@@ -27,9 +27,9 @@ func TestB64Dec(t *testing.T) {
 	fmt.Println("--> TestB64Dec")
 	in := "_wA"
 	out := []byte{0xFF, 0x00}
-	x, err := b64dec(in)
+	x, err := B64dec(in)
 	if (err != nil) || (bytes.Compare(x, out) != 0) {
-		t.Errorf("b64dec(%v) = %v, want %v", in, x, out)
+		t.Errorf("B64dec(%v) = %v, want %v", in, x, out)
 	}
 }
 
@@ -239,7 +239,7 @@ func TestEcJwsVerify(t *testing.T) {
 }
 
 func bigIntFromB64(b64 string) *big.Int {
-	bytes, _ := b64dec(b64)
+	bytes, _ := B64dec(b64)
 	x := big.NewInt(0)
 	x.SetBytes(bytes)
 	return x
@@ -263,7 +263,7 @@ func TestRsaJwsSign(t *testing.T) {
 		rsa.PrecomputedValues{},
 	}
 
-	payload, _ := b64dec("It\xe2\x80\x99s a dangerous business, Frodo, going out your door. You step onto the road, and if you don't keep your feet, there\xe2\x80\x99s no knowing where you might be swept off to.")
+	payload, _ := B64dec("It\xe2\x80\x99s a dangerous business, Frodo, going out your door. You step onto the road, and if you don't keep your feet, there\xe2\x80\x99s no knowing where you might be swept off to.")
 
 	jws, err := Sign(RSAPKCS1WithSHA256, priv, payload)
 	if err != nil {
@@ -292,7 +292,7 @@ func TestRsaPssJwsSign(t *testing.T) {
 		rsa.PrecomputedValues{},
 	}
 
-	payload, _ := b64dec("It\xe2\x80\x99s a dangerous business, Frodo, going out your door. You step onto the road, and if you don't keep your feet, there\xe2\x80\x99s no knowing where you might be swept off to.")
+	payload, _ := B64dec("It\xe2\x80\x99s a dangerous business, Frodo, going out your door. You step onto the road, and if you don't keep your feet, there\xe2\x80\x99s no knowing where you might be swept off to.")
 
 	jws, err := Sign(RSAPSSWithSHA256, priv, payload)
 	if err != nil {
@@ -315,7 +315,7 @@ func TestEcJwsSign(t *testing.T) {
 
 	priv := ecdsa.PrivateKey{ecdsa.PublicKey{elliptic.P521(), x, y}, d}
 
-	payload, _ := b64dec("It\xe2\x80\x99s a dangerous business, Frodo, going out your door. You step onto the road, and if you don't keep your feet, there\xe2\x80\x99s no knowing where you might be swept off to.")
+	payload, _ := B64dec("It\xe2\x80\x99s a dangerous business, Frodo, going out your door. You step onto the road, and if you don't keep your feet, there\xe2\x80\x99s no knowing where you might be swept off to.")
 
 	jws, err := Sign(ECDSAWithSHA512, priv, payload)
 	if err != nil {
