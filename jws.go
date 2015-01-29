@@ -197,8 +197,7 @@ func Sign(alg JoseAlgorithm, privateKey interface{}, payload []byte) (JsonWebSig
 		}
 		r, s, err := ecdsa.Sign(rand.Reader, ecPriv, inputHash)
 		if err == nil {
-			// TODO: Pad to appropriate length
-			sig = append(r.Bytes(), s.Bytes()...)
+			sig = concatRS(r, s)
 		}
 	default:
 		return zero, errors.New("Invalid signature algorithm " + string(jws.Header.Algorithm[:1]))
@@ -211,6 +210,18 @@ func Sign(alg JoseAlgorithm, privateKey interface{}, payload []byte) (JsonWebSig
 	jws.signed = true
 
 	return jws, nil
+}
+
+func concatRS(r, s *big.Int) []byte {
+	rb, sb := r.Bytes(), s.Bytes()
+
+	if padSize := len(rb) - len(sb); padSize > 0 {
+		sb = append(make([]byte, padSize), sb...)
+	} else if padSize < 0 {
+		rb = append(make([]byte, -padSize), rb...)
+	}
+
+	return append(rb, sb...)
 }
 
 func (jws *JsonWebSignature) Verify() error {
