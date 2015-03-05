@@ -26,10 +26,20 @@ type JsonWebKey struct {
 	Thumbprint string
 }
 
+func (jwk *JsonWebKey) ComputeThumbprint() {
+	jwk.Thumbprint = string(jwk.KeyType)
+	if jwk.Rsa != nil {
+		jwk.Thumbprint += b64enc(jwk.Rsa.N.Bytes())
+	} else if jwk.Ec != nil {
+		jwk.Thumbprint += b64enc(jwk.Ec.X.Bytes()) + b64enc(jwk.Ec.Y.Bytes())
+	}
+}
+
 // Normal Go == operator compares pointers directly, so it doesn't
 // match the semantic of two keys being equivalent
 func (jwk1 JsonWebKey) Equals(jwk2 JsonWebKey) bool {
-	// XXX: This only works for unmarshaled keys, not constructed keys
+	jwk1.ComputeThumbprint()
+	jwk2.ComputeThumbprint()
 	return (jwk1.Thumbprint == jwk2.Thumbprint)
 }
 
@@ -67,7 +77,6 @@ func (jwk *JsonWebKey) UnmarshalJSON(data []byte) error {
 			N: raw.N.ToBigInt(),
 			E: raw.E.ToInt(),
 		}
-		jwk.Thumbprint = b64enc(raw.N)
 	case "EC":
 		curve, err := name2curve(raw.Crv)
 		if err != nil {
@@ -79,8 +88,8 @@ func (jwk *JsonWebKey) UnmarshalJSON(data []byte) error {
 			X:     raw.X.ToBigInt(),
 			Y:     raw.Y.ToBigInt(),
 		}
-		jwk.Thumbprint = b64enc(raw.X) + b64enc(raw.Y)
 	}
 
+	jwk.ComputeThumbprint()
 	return nil
 }
