@@ -188,7 +188,6 @@ func TestEcJwsSign(t *testing.T) {
 
 	err = jws.Verify()
 	if err != nil {
-		// XXX: This sometimes failes, haven't debugged
 		t.Errorf("Signature failed verification: %+v", err)
 		return
 	}
@@ -223,6 +222,27 @@ func TestJwsCompact(t *testing.T) {
 	if err != nil {
 		t.Errorf("Signature failed verification: %+v", err)
 		return
+	}
+
+}
+
+func TestConcatRS(t *testing.T) {
+	r, s := big.NewInt(0), big.NewInt(0)
+
+	r.SetBytes([]byte{1, 2})
+	s.SetBytes([]byte{3})
+	if c := concatRS(r, s); !bytes.Equal(c, []byte{1, 2, 0, 3}) {
+		t.Errorf("Couldn't concat %v and %v: %v", r.Bytes(), s.Bytes(), c)
+	}
+
+	s.SetBytes([]byte{3, 4})
+	if c := concatRS(r, s); !bytes.Equal(c, []byte{1, 2, 3, 4}) {
+		t.Errorf("Couldn't concat %v and %v: %v", r.Bytes(), s.Bytes(), c)
+	}
+
+	s.SetBytes([]byte{3, 4, 5})
+	if c := concatRS(r, s); !bytes.Equal(c, []byte{0, 1, 2, 3, 4, 5}) {
+		t.Errorf("Couldn't concat %v and %v: %v", r.Bytes(), s.Bytes(), c)
 	}
 
 }
