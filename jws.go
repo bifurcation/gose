@@ -76,7 +76,7 @@ func (jws JsonWebSignature) MarshalCompact() ([]byte, error) {
 		return []byte{}, errors.New("Cannot marshal unsigned JWS")
 	}
 
-	return []byte(b64enc(jws.Protected) + "." + b64enc(jws.Payload) + "." + b64enc(jws.Signature)), nil
+	return []byte(B64enc(jws.Protected) + "." + B64enc(jws.Payload) + "." + B64enc(jws.Signature)), nil
 }
 
 func UnmarshalCompact(data []byte) (JsonWebSignature, error) {
@@ -88,15 +88,15 @@ func UnmarshalCompact(data []byte) (JsonWebSignature, error) {
 
 	// Decode simple fields
 	var err error
-	jws.Protected, err = b64dec(parts[0])
+	jws.Protected, err = B64dec(parts[0])
 	if err != nil {
 		return jws, err
 	}
-	jws.Payload, err = b64dec(parts[1])
+	jws.Payload, err = B64dec(parts[1])
 	if err != nil {
 		return jws, err
 	}
-	jws.Signature, err = b64dec(parts[2])
+	jws.Signature, err = B64dec(parts[2])
 	if err != nil {
 		return jws, err
 	}
@@ -112,7 +112,7 @@ func UnmarshalCompact(data []byte) (JsonWebSignature, error) {
 }
 
 func prepareInput(jws JsonWebSignature) (crypto.Hash, []byte, error) {
-	input := []byte(b64enc(jws.Protected) + "." + b64enc(jws.Payload))
+	input := []byte(B64enc(jws.Protected) + "." + B64enc(jws.Payload))
 	zeroh := crypto.Hash(0)
 	zerob := []byte{}
 
