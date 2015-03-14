@@ -1,7 +1,8 @@
 package jose
 
 import (
-	"crypto/ecdsa"
+  "bytes"
+  "crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 	"crypto/rsa"
